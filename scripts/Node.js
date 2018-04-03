@@ -1,6 +1,8 @@
 export default class Node {
-  constructor(word = null) {
-    this.data = word[0];
-    this.children = {};
+  constructor(word) {
+    this.value = null
+    this.childrenObj = {};
+    this.isAWord = false
   }
+
 }
