@@ -1,10 +1,10 @@
 import Node from '../scripts/Node';
 
-export default class Trie {
+export default class prefixTrie {
   constructor() {
-    this.wordCount = 0;
     this.root = new Node();
     this.suggestionArray =[];
+    this.wordCount = 0;
   }
 
   insert(word, currentNode = this.root) {
