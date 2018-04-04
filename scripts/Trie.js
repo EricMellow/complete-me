@@ -23,11 +23,6 @@ export default class Trie {
     currentNode = currentNode.childrenObj[word[0]]
     this.insert(word.substr(1), currentNode)
   }
-//make getting to end of prefix its own function
-//end of 'pi'
-//call suggest on pi + children keys
-//call recursively to end of word
-//make sure you're adding to prefix, so it carries value to next recursive call
 
   suggest(word, currentNode = this.root) {
     this.suggestionArray = [];
@@ -40,36 +35,23 @@ export default class Trie {
 
     this.getSuggestions(word, currentNode)
     return this.suggestionArray;
-}
-
-getSuggestions(prefix, currentNode = this.root) {
-  
-  if (currentNode.isAWord) {
-    this.suggestionArray.push(prefix)
   }
 
-  let letters = Object.keys(currentNode.childrenObj)
-  letters.forEach(letter => {
-    return this.getSuggestions(prefix + letter, currentNode.childrenObj[letter])
-  })
+  getSuggestions(prefix, currentNode = this.root) {
+    
+    if (currentNode.isAWord) {
+      this.suggestionArray.push(prefix)
+    }
 
+    let letters = Object.keys(currentNode.childrenObj)
+    letters.forEach(letter => {
+      return this.getSuggestions(prefix + letter, currentNode.childrenObj[letter])
+    })
 
-
-  // if (currentNode.isAWord) {
-  //   this.suggestion += currentNode.value;
-  //   this.suggestionArray.push(this.suggestion)
-  // }
-
-  //   if () {
-  //     let letters = Object.keys(currentNode.childrenObj);
-  //     letters.forEach(letter => this.suggest(letter, currentNode));
-  //   }
-  //   this.suggest(word.substr(1), currentNode)
-  //   return this.suggestionArray;
   }
 
-populate(words) {
-
+  populate(wordsArray) {
+    wordsArray.forEach(word => this.insert(word))
   }
 
   delete(word) {
