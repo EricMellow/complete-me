@@ -1,8 +1,9 @@
-export default class Node {
+class Node {
   constructor(word) {
-    this.value = null
+    this.value = null;
     this.childrenObj = {};
-    this.isAWord = false
+    this.isAWord = false;
   }
-
 }
+
+module.exports = Node;
