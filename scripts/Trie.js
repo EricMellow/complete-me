@@ -3,7 +3,7 @@ const Node = require('../scripts/Node');
 class prefixTree {
   constructor() {
     this.root = new Node();
-    this.suggestionArray =[];
+    this.suggestionArray = [];
     this.wordCount = 0;
   }
 
@@ -13,6 +13,7 @@ class prefixTree {
     }
 
     word = word.toLowerCase();
+
     if (!word.length) {
       if (!currentNode.isAWord) {
         currentNode.isAWord = true;
@@ -22,12 +23,12 @@ class prefixTree {
       return;
     }
 
-    if (!currentNode.childrenObj[word[0]]) {
-      currentNode.childrenObj[word[0]] = new Node();
-      currentNode.childrenObj[word[0]].value = word[0];
+    if (!currentNode.childrenObj[ word[0] ]) {
+      currentNode.childrenObj[ word[0] ] = new Node();
+      currentNode.childrenObj[ word[0] ].value = word[0];
     }
 
-    currentNode = currentNode.childrenObj[word[0]];
+    currentNode = currentNode.childrenObj[ word[0] ];
     this.insert(word.substr(1), currentNode);
   }
 
@@ -40,8 +41,8 @@ class prefixTree {
     word = word.toLowerCase();
 
     for (let i = 0; i < word.length; i++) {
-      if (currentNode.childrenObj[word[i]]) {
-        currentNode = currentNode.childrenObj[word[i]];
+      if (currentNode.childrenObj[ word[i] ]) {
+        currentNode = currentNode.childrenObj[ word[i] ];
       } else {
         return null;
       }
@@ -70,7 +71,7 @@ class prefixTree {
     wordsArray.forEach(word => this.insert(word));
   }
 
-  delete(word) {
+  delete() {
 
   }
 
