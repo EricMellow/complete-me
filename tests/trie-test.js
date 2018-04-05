@@ -11,7 +11,7 @@ describe('Prefix tree', () => {
     tree = new prefixTree();
   });
 
-  it('should have a rootNode with an empty object', () => {
+  it('should have a rootNode that is a new Node with a value of null and a childrenObj of an empty object', () => {
     expect(tree.root.value).to.equal(null);
     expect(tree.root.childrenObj).to.deep.equal({});
     expect(tree.root.isAWord).to.equal(false);
@@ -36,6 +36,12 @@ describe('Prefix tree', () => {
         value: 'b', 
         childrenObj: {e: {value: 'e', childrenObj: {}, isAWord: true}}, 
         isAWord: false }});
+    });
+
+    it('should return null if it is not passed a string', () => {
+      let numberPassed = tree.insert(2313);
+
+      expect(numberPassed).to.equal(null);
     });
 
     it('should be able to change the "isAWord" value of a node that is the end of a word to true', () => {
@@ -67,18 +73,9 @@ describe('Prefix tree', () => {
   });
 
   describe('populate', () => {
-    it('should increase the word count when adding multiple words from an array', () => {
-      let wordArray = ['test', 'jest', 'best'];
-
-      expect(tree.wordCount).to.equal(0);
-
-      tree.populate(wordArray);
-      expect(tree.wordCount).to.equal(3);
-    });
-
     it('should insert multiple words from an array to the prefixTree', () => {
       let wordArray = ['me', 'be', 'ye'];
-
+      
       tree.populate(wordArray);
       expect(tree.root.childrenObj.b).to.deep.equal({
         value: 'b',
@@ -90,59 +87,106 @@ describe('Prefix tree', () => {
         childrenObj: { e: { value: 'e', childrenObj: {}, isAWord: true } },
         isAWord: false
       });
+      expect(tree.wordCount).to.equal(3);
+    });
+    
+    it('should return null if it is not passed an array', () => {
+      
+      let numberPassed = tree.populate(2313);
+      expect(numberPassed).to.equal(null);
     });
 
     it('should insert a very large array to the prefixTree', () => {
       expect(tree.wordCount).to.equal(0);
-
+      
       tree.populate(dictionary);
       expect(tree.wordCount).to.equal(234371);
+    });
+
+    it('should increase the word count when adding multiple words from an array', () => {
+      let wordArray = ['test', 'jest', 'best'];
+
+      expect(tree.wordCount).to.equal(0);
+
+      tree.populate(wordArray);
+      expect(tree.wordCount).to.equal(3);
     });
   });
 
   describe('suggest', () => {
 
     it('should suggest words based on the prefix passed to it', () => {
-      expect(tree.suggestionArray.length).to.equal(0)
+      expect(tree.suggestionArray.length).to.equal(0);
 
-      let thisArray = ['pin', 'taco', 'pine', 'plant', 'pint', 'burrito', 'pie', 'pizza', 'pork']
+      let thisArray = ['pin', 'taco', 'pine', 'plant', 'pint', 'burrito', 'pie', 'pizza', 'pork'];
       tree.populate(thisArray);
       
       tree.suggest('pi');
       expect(tree.suggestionArray).to.deep.equal(['pin', 'pine', 'pint', 'pie', 'pizza']);
     });
 
-    it.skip('should be able to find the rootNode', () => {
-      let node = tree.find(4);
+    it('should suggest the prefix it is passed, if that happens to be a word', () => {
+      expect(tree.suggestionArray.length).to.equal(0);
 
-      expect(node).to.equal(tree.rootNode);
+      let thisArray = ['pin', 'taco', 'pine', 'plant', 'pint', 'burrito', 'pie', 'pizza', 'pork'];
+      tree.populate(thisArray);
+
+      tree.suggest('pin');
+      expect(tree.suggestionArray).to.deep.equal(['pin', 'pine', 'pint']);
     });
 
-    it.skip('should be able to find results to the immediate left (2)', () => {
-      let node = tree.find(2);
+    it('should return null if it is not passed a number', () => {
+      expect(tree.suggestionArray.length).to.equal(0);
 
-      expect(node).to.equal(tree.rootNode.left);
+      let thisArray = ['pin', 'taco', 'pine', 'plant', 'pint', 'burrito', 'pie', 'pizza', 'pork'];
+      tree.populate(thisArray);
+
+      let numberPassed = tree.suggest(2313);
+      expect(numberPassed).to.equal(null);
     });
 
-    it.skip('should be able to find results to the far left (1)', () => {
-      let node = tree.find(1);
+    it('should suggest words and not be case sensitive', () => {
+      expect(tree.suggestionArray.length).to.equal(0);
 
-      expect(node).to.equal(tree.rootNode.left.left);
+      let thisArray = ['pin', 'taco', 'pine', 'plant', 'pint', 'burrito', 'pie', 'pizza', 'pork'];
+      tree.populate(thisArray);
+
+      tree.suggest('PI');
+      expect(tree.suggestionArray).to.deep.equal(['pin', 'pine', 'pint', 'pie', 'pizza']);
     });
 
-    it.skip('should be able to find results to the immediate right (6)', () => {
-      let node = tree.find(6);
+    it('should always set the suggestionArray to empty first', () => {
+      expect(tree.suggestionArray).to.deep.equal([]);
 
-      expect(node).to.equal(tree.rootNode.right);
+      let thisArray = ['pin', 'taco', 'pine', 'plant', 'pint', 'burrito', 'pie', 'pizza', 'pork'];
+      tree.populate(thisArray);
+
+      tree.suggest('pi');
+      expect(tree.suggestionArray).to.deep.equal(['pin', 'pine', 'pint', 'pie', 'pizza']);
+
+      let secondArray = ['bet', 'bean', 'burrito', 'pizza', 'bear', 'test', 'jest', 'bee'];
+
+      tree.populate(secondArray);
+      tree.suggest('be');
+      expect(tree.suggestionArray).to.deep.equal(['bet', 'bean', 'bear', 'bee']);
     });
 
-    it.skip('should be able to find nested results (5 and 3)', () => {
-      let node = tree.find(5);
+    it('should return null if there are no suggestions)', () => {
+      let thisArray = ['pin', 'taco', 'pine', 'plant', 'pint', 'burrito', 'pie', 'pizza', 'pork'];
+      tree.populate(thisArray);
 
-      expect(node).to.equal(tree.rootNode.right.left);
+      let nullAnswer = tree.suggest('co');
+      expect(nullAnswer).to.equal(null);
     });
   });
 
-});
+  describe('count', () => {
+    it('should return the total word count', () => {
 
-//to.have.property
+      tree.populate(dictionary);
+      let countTotal = tree.count();
+
+      expect(countTotal).to.equal(234371);
+    });
+  });
+});
