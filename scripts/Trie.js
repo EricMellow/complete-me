@@ -8,6 +8,10 @@ class prefixTree {
   }
 
   insert(word, currentNode = this.root) {
+    if (typeof word !== 'string') {
+      return null;
+    }
+
     word = word.toLowerCase();
     if (!word.length) {
       if (!currentNode.isAWord) {
@@ -28,12 +32,18 @@ class prefixTree {
   }
 
   suggest(word, currentNode = this.root) {
+    if (typeof word !== 'string') {
+      return null;
+    }
+
     this.suggestionArray = [];
     word = word.toLowerCase();
 
     for (let i = 0; i < word.length; i++) {
       if (currentNode.childrenObj[word[i]]) {
         currentNode = currentNode.childrenObj[word[i]];
+      } else {
+        return null;
       }
     }
 
@@ -41,7 +51,7 @@ class prefixTree {
     return this.suggestionArray;
   }
 
-  getSuggestions(prefix, currentNode = this.root) {
+  getSuggestions(prefix, currentNode) {
     
     if (currentNode.isAWord) {
       this.suggestionArray.push(prefix);
@@ -51,10 +61,12 @@ class prefixTree {
     letters.forEach(letter => {
       return this.getSuggestions(prefix + letter, currentNode.childrenObj[letter]);
     });
-
   }
 
   populate(wordsArray) {
+    if (!Array.isArray(wordsArray)) {
+      return null;
+    }
     wordsArray.forEach(word => this.insert(word));
   }
 
