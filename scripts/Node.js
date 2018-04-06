@@ -3,6 +3,7 @@ class Node {
     this.value = null;
     this.childrenObj = {};
     this.isAWord = false;
+    this.weight = 0;
   }
 }
 

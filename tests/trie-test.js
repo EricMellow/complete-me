@@ -26,7 +26,7 @@ describe('Prefix tree', () => {
     it('should be able to add a node to the prefixTree', () => {
       tree.insert('Z');
 
-      expect(tree.root.childrenObj).to.deep.equal({z: {value: 'z', childrenObj: {}, isAWord: true}});
+      expect(tree.root.childrenObj).to.deep.equal({z: {value: 'z', childrenObj: {}, isAWord: true, weight: 0}});
     });
 
     it('should be able to add a word to the prefixTree', () => {
@@ -34,8 +34,9 @@ describe('Prefix tree', () => {
 
       expect(tree.root.childrenObj).to.deep.equal({ b: { 
         value: 'b', 
-        childrenObj: {e: {value: 'e', childrenObj: {}, isAWord: true}}, 
-        isAWord: false }});
+        childrenObj: {e: {value: 'e', childrenObj: {}, isAWord: true, weight: 0}}, 
+        isAWord: false,
+        weight: 0 }});
     });
 
     it('should return null if it is not passed a string', () => {
@@ -79,13 +80,15 @@ describe('Prefix tree', () => {
       tree.populate(wordArray);
       expect(tree.root.childrenObj.b).to.deep.equal({
         value: 'b',
-        childrenObj: { e: { value: 'e', childrenObj: {}, isAWord: true } },
-        isAWord: false
+        childrenObj: { e: { value: 'e', childrenObj: {}, isAWord: true, weight: 0 } },
+        isAWord: false,
+        weight: 0
       });
       expect(tree.root.childrenObj.y).to.deep.equal({
         value: 'y',
-        childrenObj: { e: { value: 'e', childrenObj: {}, isAWord: true } },
-        isAWord: false
+        childrenObj: { e: { value: 'e', childrenObj: {}, isAWord: true, weight: 0 } },
+        isAWord: false,
+        weight: 0
       });
       expect(tree.wordCount).to.equal(3);
     });
@@ -121,8 +124,8 @@ describe('Prefix tree', () => {
       let thisArray = ['pin', 'taco', 'pine', 'plant', 'pint', 'burrito', 'pie', 'pizza', 'pork'];
       tree.populate(thisArray);
       
-      tree.suggest('pi');
-      expect(tree.suggestionArray).to.deep.equal(['pin', 'pine', 'pint', 'pie', 'pizza']);
+      let suggestions = tree.suggest('pi');
+      expect(suggestions).to.deep.equal(['pin', 'pine', 'pint', 'pie', 'pizza']);
     });
 
     it('should suggest the prefix it is passed, if that happens to be a word', () => {
@@ -131,8 +134,8 @@ describe('Prefix tree', () => {
       let thisArray = ['pin', 'taco', 'pine', 'plant', 'pint', 'burrito', 'pie', 'pizza', 'pork'];
       tree.populate(thisArray);
 
-      tree.suggest('pin');
-      expect(tree.suggestionArray).to.deep.equal(['pin', 'pine', 'pint']);
+      let suggestions = tree.suggest('pin');
+      expect(suggestions).to.deep.equal(['pin', 'pine', 'pint']);
     });
 
     it('should return null if it is not passed a number', () => {
@@ -151,8 +154,8 @@ describe('Prefix tree', () => {
       let thisArray = ['pin', 'taco', 'pine', 'plant', 'pint', 'burrito', 'pie', 'pizza', 'pork'];
       tree.populate(thisArray);
 
-      tree.suggest('PI');
-      expect(tree.suggestionArray).to.deep.equal(['pin', 'pine', 'pint', 'pie', 'pizza']);
+      let suggestions = tree.suggest('PI');
+      expect(suggestions).to.deep.equal(['pin', 'pine', 'pint', 'pie', 'pizza']);
     });
 
     it('should always set the suggestionArray to empty first', () => {
@@ -161,14 +164,14 @@ describe('Prefix tree', () => {
       let thisArray = ['pin', 'taco', 'pine', 'plant', 'pint', 'burrito', 'pie', 'pizza', 'pork'];
       tree.populate(thisArray);
 
-      tree.suggest('pi');
-      expect(tree.suggestionArray).to.deep.equal(['pin', 'pine', 'pint', 'pie', 'pizza']);
+      let suggestions = tree.suggest('pi');
+      expect(suggestions).to.deep.equal(['pin', 'pine', 'pint', 'pie', 'pizza']);
 
       let secondArray = ['bet', 'bean', 'burrito', 'pizza', 'bear', 'test', 'jest', 'bee'];
 
       tree.populate(secondArray);
-      tree.suggest('be');
-      expect(tree.suggestionArray).to.deep.equal(['bet', 'bean', 'bear', 'bee']);
+      let secondSuggestions = tree.suggest('be');
+      expect(secondSuggestions).to.deep.equal(['bet', 'bean', 'bear', 'bee']);
     });
 
     it('should return null if there are no suggestions)', () => {
@@ -187,6 +190,20 @@ describe('Prefix tree', () => {
       let countTotal = tree.count();
 
       expect(countTotal).to.equal(234371);
+    });
+  });
+
+  describe('select', () => {
+    it.only('should increase the weight of the word passed to it', () => {
+      let thisArray = ['pin', 'taco', 'pine', 'plant', 'pint', 'burrito', 'pie', 'pizza', 'pork'];
+      tree.populate(thisArray);
+
+      tree.select('pizza');
+      tree.select('pizza');
+      // console.log(JSON.stringify(tree, null, 2))
+      let suggestions = tree.suggest('pi');
+      expect(suggestions).to.deep.equal(['pizza','pin', 'pine', 'pint', 'pie']);
+      
     });
   });
 });
