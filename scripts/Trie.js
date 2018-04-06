@@ -49,19 +49,36 @@ class prefixTree {
     }
 
     this.getSuggestions(word, currentNode);
-    return this.suggestionArray;
+    
+    let sortedObjectsArray = this.suggestionArray.sort((a, b) => b.value - a.value);
+    console.log(sortedObjectsArray)
+    let cleanArray = sortedObjectsArray.map(object => object.word)
+    return cleanArray;
   }
 
   getSuggestions(prefix, currentNode) {
     
     if (currentNode.isAWord) {
-      this.suggestionArray.push(prefix);
+    
+      currentNode.weight++;
+      this.suggestionArray.push({word: prefix, value: currentNode.weight});
     }
 
     let letters = Object.keys(currentNode.childrenObj);
     letters.forEach(letter => {
       return this.getSuggestions(prefix + letter, currentNode.childrenObj[letter]);
     });
+  }
+
+  select(word) {
+
+    let currentNode = this.root;
+    for (let i = 0; i < word.length; i++) {
+      if (currentNode.childrenObj[word[i]]) {
+        currentNode = currentNode.childrenObj[word[i]];
+      } 
+    }
+    currentNode.weight++;
   }
 
   populate(wordsArray) {
