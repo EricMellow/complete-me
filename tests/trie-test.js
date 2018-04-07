@@ -194,16 +194,60 @@ describe('Prefix tree', () => {
   });
 
   describe('select', () => {
-    it.only('should increase the weight of the word passed to it', () => {
+    it('should add weight to the selected word', () => {
+      let wordArray = ['me', 'be', 'ye'];
+
+      tree.populate(wordArray);
+      tree.select('ye');
+      expect(tree.root.childrenObj.b).to.deep.equal({
+        value: 'b',
+        childrenObj: { e: { value: 'e', childrenObj: {}, isAWord: true, weight: 0 } },
+        isAWord: false,
+        weight: 0
+      });
+      expect(tree.root.childrenObj.y).to.deep.equal({
+        value: 'y',
+        childrenObj: { e: { value: 'e', childrenObj: {}, isAWord: true, weight: 1 } },
+        isAWord: false,
+        weight: 0
+      });
+    });
+
+    it('should add weight to the selected word each time it is selected', () => {
+      let wordArray = ['me', 'be', 'ye'];
+
+      tree.populate(wordArray);
+      tree.select('ye');
+      expect(tree.root.childrenObj.b).to.deep.equal({
+        value: 'b',
+        childrenObj: { e: { value: 'e', childrenObj: {}, isAWord: true, weight: 0 } },
+        isAWord: false,
+        weight: 0
+      });
+      expect(tree.root.childrenObj.y).to.deep.equal({
+        value: 'y',
+        childrenObj: { e: { value: 'e', childrenObj: {}, isAWord: true, weight: 1 } },
+        isAWord: false,
+        weight: 0
+      });
+      
+      tree.select('ye');
+      expect(tree.root.childrenObj.y).to.deep.equal({
+        value: 'y',
+        childrenObj: { e: { value: 'e', childrenObj: {}, isAWord: true, weight: 2 } },
+        isAWord: false,
+        weight: 0
+      });
+    });
+
+    it('should add words with a larger weight to the beginning of the suggestionArray', () => {
       let thisArray = ['pin', 'taco', 'pine', 'plant', 'pint', 'burrito', 'pie', 'pizza', 'pork'];
       tree.populate(thisArray);
 
       tree.select('pizza');
       tree.select('pizza');
-      // console.log(JSON.stringify(tree, null, 2))
       let suggestions = tree.suggest('pi');
-      expect(suggestions).to.deep.equal(['pizza','pin', 'pine', 'pint', 'pie']);
-      
+      expect(suggestions).to.deep.equal(['pizza', 'pin', 'pine', 'pint', 'pie']);
     });
   });
 });
