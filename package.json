@@ -1,5 +1,5 @@
 {
-  "name": "Mellow JS Prefix Trie",
+  "name": "mellow-complete-me",
   "version": "1.0.0",
   "description": "Populate your own prefix trie and use it to suggest words!",
   "main": "index.js",
