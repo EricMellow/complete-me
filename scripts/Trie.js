@@ -51,15 +51,12 @@ class prefixTree {
     this.getSuggestions(word, currentNode);
     
     let sortedObjectsArray = this.suggestionArray.sort((a, b) => b.value - a.value);
-    console.log(sortedObjectsArray)
     let cleanArray = sortedObjectsArray.map(object => object.word)
     return cleanArray;
   }
 
   getSuggestions(prefix, currentNode) {
-    
     if (currentNode.isAWord) {
-    
       currentNode.weight++;
       this.suggestionArray.push({word: prefix, value: currentNode.weight});
     }
@@ -71,7 +68,6 @@ class prefixTree {
   }
 
   select(word) {
-
     let currentNode = this.root;
     for (let i = 0; i < word.length; i++) {
       if (currentNode.childrenObj[word[i]]) {
@@ -86,10 +82,6 @@ class prefixTree {
       return null;
     }
     wordsArray.forEach(word => this.insert(word));
-  }
-
-  delete() {
-
   }
 
   count() {
